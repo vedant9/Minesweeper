@@ -15,32 +15,19 @@ class createMine{
 			Cell [][]c=new Cell[rows][columns];
 			p1.setLayout(new GridLayout(rows,columns));
 			p1.setBackground(Color.black);
-		//	p1.addMouseListener(new MouseAdapter() {
-		//		@Override
-		//		public void mouseClicked(MouseEvent e) {
-		//			if(e.getModifiers()==MouseEvent.BUTTON3)
-		//			{
-		//				c[1][1].setColor();
-		//			}
-		//		}
-		//		
-		//	});
 			for(int i=0;i<10;i++)
 			{
 				for(int j=0;j<10;j++)
 				{
 					c[i][j]=new Cell();
 					int random=(int)(Math.random()*100);
-					//System.out.println(random+"\n");
 					if(random>80)
 					{
 						c[i][j].setBomb(1);
-						//System.out.println("YES");
 					}
 					else
 					{
 						c[i][j].setBomb(0);
-						//System.out.println("NO");
 					}
 					p1.add(c[i][j].getButton());
 				}
@@ -169,7 +156,7 @@ class createMine{
 					}
 					
 				}
-			}
+			}			
 			JPanel wrapper = new JPanel(new GridBagLayout());
 			GridBagConstraints cons = new GridBagConstraints();
 			cons.gridx=0;
@@ -190,6 +177,9 @@ class Cell implements MouseListener{
 	private JButton button;
 	int bomb;
 	int val;
+	int visit=0;
+	static int reached=0;
+	static int click=0;
 	Popup popup;
 	Cell()
 	{
@@ -217,20 +207,32 @@ class Cell implements MouseListener{
 		return bomb;
 	}
 	public void mouseClicked(MouseEvent e){
+		if(visit==0)
+		{
+			visit=1;
+			reached+=1;
+		}
+		else
+			visit=1;
 		if(SwingUtilities.isLeftMouseButton(e))
 		{
 			if(bomb==1)
 			{
 				button.setBackground(Color.RED);
+				JOptionPane.showMessageDialog(button, "YOU LOST");
+				System.exit(0);
+				check();
+				
 			}
 			else
 			{
 				button.setText(String.valueOf(val));
+				check();
 			}
 		}
 		else if(SwingUtilities.isRightMouseButton(e))
 		{
-			if(button.getBackground()!=Color.RED || button.getText().equals(String.valueOf(val)))
+			if(button.getBackground()!=Color.RED || !(button.getText().equals(String.valueOf(val))))
 			button.setBackground(Color.BLUE);
 		}
 	}
@@ -255,14 +257,14 @@ class Cell implements MouseListener{
 	{
 		
 	}
-
-	
+	public void check() {
+		if(reached==100)
+			JOptionPane.showMessageDialog(button, "You've done it, mate!");
+	}
 }
 class Minesweeper{
 	public static void main(String args[])
 	{
-		Scanner one=new Scanner(System.in);
-		System.out.println("CHOOSE: \n 1: 6x6 \n2: 8x8 \n3: 10x10");
 		createMine c1=new createMine(10,10);
 		c1.go();
 	}
